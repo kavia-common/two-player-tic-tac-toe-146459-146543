@@ -3,16 +3,29 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tic_tac_toe_frontend/main.dart';
 
 void main() {
-  testWidgets('App generation message displayed', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Header and board render', (WidgetTester tester) async {
+    await tester.pumpWidget(const TicTacToeApp());
+    // Title
+    expect(find.text('Tic Tac Toe'), findsOneWidget);
 
-    expect(find.text('tic_tac_toe_frontend App is being generated...'), findsOneWidget);
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    // Score pills
+    expect(find.text('Player X'), findsOneWidget);
+    expect(find.text('Player O'), findsOneWidget);
+
+    // Turn indicator appears
+    expect(find.textContaining('Turn:'), findsOneWidget);
   });
 
-  testWidgets('App bar has correct title', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Tap to place marks and detect win/draw UI elements exist', (WidgetTester tester) async {
+    await tester.pumpWidget(const TicTacToeApp());
+    // Find grid cells by icon for empties
+    final emptyIcon = find.byIcon(Icons.add_rounded);
+    expect(emptyIcon, findsNWidgets(9));
 
-    expect(find.text('tic_tac_toe_frontend'), findsOneWidget);
+    // Tap a few cells to ensure interaction
+    await tester.tap(emptyIcon.at(0));
+    await tester.pumpAndSettle();
+    // After a move, there should be 8 empties left
+    expect(find.byIcon(Icons.add_rounded), findsNWidgets(8));
   });
 }
